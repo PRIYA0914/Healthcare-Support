@@ -5,9 +5,13 @@
  * - Name, Age, Issue Category, and Description
  * 
  * Validates inputs before submission and sends data to backend API.
+ * 
+ * FEATURE 4 SUPPORT (Edit Request):
+ * Accepts initialData prop to pre-fill form when editing a previous submission.
+ * This enables the edit flow without data loss.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { submitSupportRequest } from '../services/api';
 import '../styles/PatientSupportForm.css';
 
@@ -20,8 +24,8 @@ const ISSUE_CATEGORIES = [
   { value: 'Other', label: 'Other' }
 ];
 
-function PatientSupportForm({ onSuccess }) {
-  // Form field states
+function PatientSupportForm({ onSuccess, initialData }) {
+  // Form field states - initialized from initialData if provided
   const [formData, setFormData] = useState({
     name: '',
     age: '',
@@ -33,6 +37,23 @@ function PatientSupportForm({ onSuccess }) {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState(null);
+
+  /**
+   * FEATURE 4: Pre-fill form with initial data when editing
+   * 
+   * This effect runs when initialData changes, allowing the form
+   * to be pre-populated when the user clicks "Edit Request"
+   */
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        name: initialData.name || '',
+        age: initialData.age || '',
+        issueCategory: initialData.issueCategory || '',
+        description: initialData.description || ''
+      });
+    }
+  }, [initialData]);
 
   /**
    * Handles input field changes
@@ -125,8 +146,9 @@ function PatientSupportForm({ onSuccess }) {
       const response = await submitSupportRequest(requestData);
 
       if (response.success) {
-        // Call success callback with the result data
-        onSuccess(response.data);
+        // FEATURE 4: Pass both form data and result to parent
+        // This enables the edit flow by preserving the submitted data
+        onSuccess(requestData, response.data);
       } else {
         setApiError(response.error || 'Failed to submit request');
       }

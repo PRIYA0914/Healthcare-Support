@@ -94,11 +94,14 @@ The mock AI is fully functional and demonstrates where AI would be integrated in
 ngo/
 ├── backend/
 │   ├── controllers/
-│   │   └── supportController.js    # Request handling logic
+│   │   ├── supportController.js    # Request handling logic
+│   │   └── chatbotController.js    # NEW: Chatbot message handling
 │   ├── routes/
-│   │   └── supportRoutes.js        # API route definitions
+│   │   ├── supportRoutes.js        # API route definitions
+│   │   └── chatbotRoutes.js        # NEW: Chatbot API routes
 │   ├── services/
-│   │   └── aiService.js            # AI/mock processing logic
+│   │   ├── aiService.js            # AI/mock processing logic
+│   │   └── chatbotService.js       # NEW: Rule-based FAQ chatbot
 │   ├── utils/
 │   │   ├── validators.js           # Input validation
 │   │   └── errorHandler.js         # Error handling middleware
@@ -111,19 +114,29 @@ ngo/
 │   │   └── index.html
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── Header.js           # Application header
-│   │   │   ├── PatientSupportForm.js # Main form component
-│   │   │   └── ResultDisplay.js    # AI results display
+│   │   │   ├── Header.js              # Application header
+│   │   │   ├── PatientSupportForm.js  # Main form component
+│   │   │   ├── ResultDisplay.js       # AI results display (enhanced)
+│   │   │   ├── PriorityBadge.js       # NEW: Color-coded urgency badge
+│   │   │   ├── HealthcareDisclaimer.js # NEW: Medical safety notice
+│   │   │   ├── FAQAccordion.js        # NEW: FAQ section (chatbot concept)
+│   │   │   └── ChatBot.js             # NEW: FAQ chatbot with floating button
 │   │   ├── services/
-│   │   │   └── api.js              # API communication
+│   │   │   └── api.js                 # API communication
+│   │   ├── utils/
+│   │   │   └── resultHelpers.js       # NEW: Helper functions
 │   │   ├── styles/
-│   │   │   ├── index.css           # Global styles
+│   │   │   ├── index.css              # Global styles
 │   │   │   ├── App.css
 │   │   │   ├── Header.css
 │   │   │   ├── PatientSupportForm.css
-│   │   │   └── ResultDisplay.css
-│   │   ├── App.js                  # Main app component
-│   │   └── index.js                # React entry point
+│   │   │   ├── ResultDisplay.css      # Enhanced with new feature styles
+│   │   │   ├── PriorityBadge.css      # NEW
+│   │   │   ├── HealthcareDisclaimer.css # NEW
+│   │   │   ├── FAQAccordion.css       # NEW
+│   │   │   └── ChatBot.css            # NEW: Chatbot styling
+│   │   ├── App.js                     # Main app component (enhanced)
+│   │   └── index.js                   # React entry point
 │   ├── package.json
 │   └── .env.example
 │
@@ -249,6 +262,28 @@ Response (Error):
 }
 ```
 
+### Chatbot Message
+```
+POST /api/chatbot/message
+Content-Type: application/json
+```
+
+Request Body:
+```json
+{
+  "message": "What services do you provide?"
+}
+```
+
+Response:
+```json
+{
+  "success": true,
+  "reply": "Jarurat Care provides: Medical attention coordination, Mental health support, Medication assistance, Emergency healthcare connections...",
+  "intent": "services"
+}
+```
+
 ---
 
 ## 🔒 Environment Variables
@@ -305,6 +340,201 @@ REACT_APP_API_URL=http://localhost:5000/api
 - [x] OpenAI integration with mock fallback
 - [x] RESTful API design
 - [x] Professional code structure
+
+---
+
+## 🆕 Enhanced Features (Version 2.0)
+
+We've added 7 enterprise-quality features to improve UX, volunteer efficiency, and healthcare responsibility:
+
+### 1. 🎨 Priority Badge with Color Coding
+
+**What it does:** Converts text-based urgency into a visual, color-coded badge.
+
+**Colors:**
+- 🟢 **Green** → Low Priority (non-urgent)
+- 🟡 **Yellow/Amber** → Medium Priority (needs attention within 24-48 hours)
+- 🔴 **Red** → High Priority (requires immediate attention)
+
+**Why it matters for NGO volunteers:**
+- Instant visual recognition without reading text
+- Traffic-light colors are universally understood
+- Reduces cognitive load during triage
+- Improves response time for critical cases
+
+---
+
+### 2. 📬 Auto-Acknowledgement Message (Automation)
+
+**What it does:** Automatically generates appropriate response expectations based on urgency level.
+
+**Messages:**
+| Urgency | Message |
+|---------|---------|
+| High | "A volunteer will contact you as soon as possible due to high urgency." |
+| Medium | "Your request is under review. You can expect a response within 24–48 hours." |
+| Low | "Your request has been queued and will be reviewed shortly." |
+
+**Automation benefits:**
+- Reduces manual communication overhead for volunteers
+- Sets clear patient expectations immediately
+- Ensures consistent messaging across all requests
+- Reduces patient anxiety through immediate feedback
+
+---
+
+### 3. ⚕️ Healthcare Emergency Disclaimer
+
+**What it does:** Displays a prominent medical safety notice on every result screen.
+
+**The disclaimer states:**
+> "This tool does not replace professional medical advice, diagnosis, or treatment. In case of emergency, please contact local emergency services immediately."
+
+**Why this matters:**
+- Healthcare responsibility and compliance awareness
+- Protects both the organization and patients
+- Ensures users understand this is a support tool, not a diagnostic service
+- Encourages seeking professional help for true emergencies
+
+---
+
+### 4. ✏️ Edit Request & Reset Flow
+
+**What it does:** Provides two clear actions after submission:
+
+1. **Edit Request** → Returns to form with pre-filled data for corrections
+2. **Submit Another Request** → Clears everything for a fresh form
+
+**UX benefits:**
+- No data loss when making corrections
+- No page reload required (true SPA experience)
+- Clear separation of "form state" and "result state" in React
+- Reduces user frustration from re-entering data
+
+---
+
+### 5. 💬 FAQ Section (Chatbot Concept Substitute)
+
+**What it does:** Provides a collapsible FAQ accordion with common questions.
+
+**Included FAQs:**
+- What kind of support is provided?
+- How long does it take to respond?
+- Is my data safe?
+- Is this a medical service?
+
+**Why FAQ instead of a full chatbot:**
+- Addresses 80% of common questions with minimal complexity
+- Instant responses without API calls
+- Easy to maintain and update
+- Demonstrates the concept without over-engineering
+- In production, could be enhanced with AI-powered search
+
+---
+
+### 6. 📊 AI Confidence Indicator
+
+**What it does:** Displays a simulated confidence percentage for the AI analysis.
+
+**Example:** "AI Confidence: 82% (simulated)"
+
+**Important notes:**
+- Clearly labeled as "simulated" to avoid medical misinterpretation
+- Does NOT imply diagnostic certainty
+- Helps users understand AI isn't 100% certain
+- In production, would use actual model confidence scores
+
+**How simulation works:**
+- Base confidence varies by category (Emergency: 92%, Medical: 78%, Mental Health: 72%, Other: 65%)
+- Adjusted by urgency level (High urgency keywords are usually clearer)
+- Small random variation for realism (±3%)
+
+---
+
+### 7. 📋 Copy Summary to Clipboard
+
+**What it does:** One-click button to copy the AI summary to clipboard.
+
+**Copied format includes:**
+- Patient name
+- Category
+- Priority level
+- Full AI summary
+
+**UX benefits for volunteers:**
+- Quick paste into other systems (CRMs, notes, emails)
+- Reduces transcription errors
+- Immediate visual feedback ("Copied!" confirmation)
+- Works across all modern browsers
+
+---
+
+### 8. 🤖 FAQ Chatbot (Full Implementation)
+
+**What it does:** A floating chat button that opens an interactive chatbot for answering common questions.
+
+**Features:**
+- **Floating Button**: Always visible "Need Help?" button in bottom-right corner
+- **Chat Window**: Clean, professional chat interface
+- **Quick Replies**: Pre-defined buttons for common questions
+- **Typing Indicator**: Visual feedback while bot is "thinking"
+- **Auto-scroll**: Automatically scrolls to new messages
+- **Medical Disclaimer**: Safety notice in every response
+
+**Supported Intents (12 total):**
+| Intent | Example Questions |
+|--------|-------------------|
+| Greeting | "Hello", "Hi there" |
+| Services | "What do you offer?", "What help is available?" |
+| Response Time | "How long for a response?", "When will I hear back?" |
+| Medical Service | "Can you diagnose?", "Is this a clinic?" |
+| Emergency | "Life-threatening", "Heart attack", "Suicide" |
+| Data Safety | "Is my data safe?", "Privacy policy" |
+| Volunteer | "How to volunteer?", "Join your team" |
+| How to Submit | "How to submit?", "Make a request" |
+| Cost | "Is it free?", "How much does it cost?" |
+| Mental Health | "Feeling depressed", "Anxiety", "Stress" |
+| Thanks | "Thank you", "Thanks" |
+| Goodbye | "Bye", "See you" |
+
+**Emergency Detection:**
+The chatbot detects emergency keywords and responds with:
+> "This sounds like an emergency. Please call your local emergency services immediately. Our support portal is not a substitute for emergency medical care."
+
+**Why this matters:**
+- Reduces volunteer workload by answering common questions automatically
+- 24/7 availability for basic inquiries
+- Consistent, accurate responses
+- Professional, accessible interface
+- Clear safety boundaries (not medical advice)
+
+---
+
+## 👥 NGO Volunteer Workflow
+
+Here's how these features improve the volunteer experience:
+
+```
+1. Patient submits request
+   ↓
+2. AI processes and returns:
+   - Summary (with copy button for easy sharing)
+   - Priority Badge (instant visual triage)
+   - Confidence Score (transparency about AI certainty)
+   ↓
+3. Auto-acknowledgement sets patient expectations
+   ↓
+4. Healthcare disclaimer ensures responsible communication
+   ↓
+5. Volunteer reviews prioritized queue:
+   - Red badges first (immediate action)
+   - Yellow badges next (within 24-48 hours)
+   - Green badges (queued for review)
+   ↓
+6. Patient can edit or submit new request as needed
+   ↓
+7. FAQ section handles common questions automatically
+```
 
 ---
 

@@ -10,6 +10,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const supportRoutes = require('./routes/supportRoutes');
+const chatbotRoutes = require('./routes/chatbotRoutes');
 const { errorHandler, notFoundHandler } = require('./utils/errorHandler');
 
 const app = express();
@@ -36,6 +37,7 @@ app.get('/api/health', (req, res) => {
 
 // API Routes
 app.use('/api', supportRoutes);
+app.use('/api/chatbot', chatbotRoutes);
 
 // Error Handling
 app.use(notFoundHandler);

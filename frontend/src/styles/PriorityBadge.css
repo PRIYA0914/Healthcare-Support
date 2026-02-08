@@ -1,0 +1,94 @@
+/**
+ * PriorityBadge Component Styles
+ * 
+ * Color-coded badge for urgency visualization
+ * Uses high-contrast colors for accessibility
+ */
+
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.priority-badge:hover {
+  transform: scale(1.02);
+}
+
+/* Badge Icon */
+.priority-badge__icon {
+  font-size: 1.1rem;
+}
+
+/* Size Variants */
+.priority-badge--small {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.8rem;
+}
+
+.priority-badge--small .priority-badge__icon {
+  font-size: 0.9rem;
+}
+
+.priority-badge--large {
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: 1.1rem;
+}
+
+.priority-badge--large .priority-badge__icon {
+  font-size: 1.3rem;
+}
+
+/* Priority Colors - Traffic Light Pattern */
+
+/* LOW Priority - Green
+   Green universally signals "safe" or "go ahead"
+   WCAG AA compliant contrast ratio */
+.priority-badge--low {
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  color: #1b5e20;
+  border: 1px solid #a5d6a7;
+}
+
+/* MEDIUM Priority - Yellow/Amber
+   Yellow signals caution - needs attention but not critical
+   Using amber instead of pure yellow for better contrast */
+.priority-badge--medium {
+  background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+  color: #e65100;
+  border: 1px solid #ffd54f;
+}
+
+/* HIGH Priority - Red
+   Red immediately draws attention - universal danger signal
+   Bold styling to ensure it stands out */
+.priority-badge--high {
+  background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+  color: #b71c1c;
+  border: 1px solid #ef9a9a;
+  animation: pulse-high 2s ease-in-out infinite;
+}
+
+/* Subtle pulse animation for high priority to draw attention */
+@keyframes pulse-high {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(183, 28, 28, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(183, 28, 28, 0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .priority-badge {
+    font-size: 0.85rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+}

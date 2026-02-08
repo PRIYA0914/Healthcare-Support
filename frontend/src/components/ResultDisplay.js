@@ -1,40 +1,85 @@
 /**
- * ResultDisplay Component - Shows AI analysis results
+ * ResultDisplay Component - Enhanced AI Analysis Results View
  * 
- * Displays the processed patient request with:
- * - Summary of the issue
- * - Urgency level with visual indicator
- * - Option to submit a new request
+ * This component displays the processed patient request with all 7 enhanced features:
+ * 1. Priority Badge with Color Coding - Visual urgency indicator
+ * 2. Auto-Acknowledgement Message - Urgency-based automated response
+ * 3. Healthcare Emergency Disclaimer - Medical safety notice
+ * 4. Edit Request & Reset Flow - Allows correction or new submission
+ * 5. FAQ Section - Chatbot concept substitute
+ * 6. AI Confidence Indicator - Simulated confidence percentage
+ * 7. Copy Summary to Clipboard - One-click copy functionality
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import PriorityBadge from './PriorityBadge';
+import HealthcareDisclaimer from './HealthcareDisclaimer';
+import FAQAccordion from './FAQAccordion';
+import {
+  getAcknowledgementMessage,
+  getAIConfidence,
+  copyToClipboard,
+  formatSummaryForCopy
+} from '../utils/resultHelpers';
 import '../styles/ResultDisplay.css';
 
-/**
- * Maps urgency levels to display properties
- * Each urgency level has a specific color and icon for visual clarity
- */
-const URGENCY_CONFIG = {
-  Low: {
-    className: 'urgency-low',
-    icon: '✓',
-    description: 'This request has been classified as low priority. You can expect a response within a few days.'
-  },
-  Medium: {
-    className: 'urgency-medium',
-    icon: '⚡',
-    description: 'This request has been classified as medium priority. We recommend follow-up within 24-48 hours.'
-  },
-  High: {
-    className: 'urgency-high',
-    icon: '🚨',
-    description: 'This request has been classified as HIGH priority. Immediate attention is recommended.'
-  }
-};
+function ResultDisplay({ result, onNewRequest, onEditRequest }) {
+  // FEATURE 7: Copy to clipboard state
+  const [copyStatus, setCopyStatus] = useState(null); // null | 'success' | 'error'
 
-function ResultDisplay({ result, onNewRequest }) {
-  // Get urgency configuration based on the result
-  const urgencyConfig = URGENCY_CONFIG[result.urgency] || URGENCY_CONFIG.Medium;
+  // FEATURE 6: AI Confidence - calculated once on mount for consistency
+  const [aiConfidence, setAiConfidence] = useState(null);
+
+  // Calculate AI confidence on component mount
+  // This ensures the same confidence is shown throughout the session
+  useEffect(() => {
+    const confidence = getAIConfidence(result.urgency, result.category);
+    setAiConfidence(confidence);
+  }, [result.urgency, result.category]);
+
+  // FEATURE 2: Get automated acknowledgement message based on urgency
+  const acknowledgementMessage = getAcknowledgementMessage(result.urgency);
+
+  /**
+   * FEATURE 7: Handles copying the summary to clipboard
+   * 
+   * UX BENEFIT FOR VOLUNTEERS:
+   * Volunteers often need to paste summaries into other systems (CRMs, notes, emails).
+   * One-click copy saves time and reduces transcription errors.
+   */
+  const handleCopySummary = async () => {
+    const formattedText = formatSummaryForCopy(result);
+    const success = await copyToClipboard(formattedText);
+    
+    setCopyStatus(success ? 'success' : 'error');
+    
+    // Clear status after 3 seconds
+    setTimeout(() => {
+      setCopyStatus(null);
+    }, 3000);
+  };
+
+  /**
+   * FEATURE 4: Edit Request Handler
+   * Takes user back to form with pre-filled data
+   * Allows correction without losing entered information
+   */
+  const handleEdit = () => {
+    if (onEditRequest) {
+      onEditRequest();
+    }
+  };
+
+  /**
+   * FEATURE 4: Reset Handler
+   * Clears all state and starts fresh
+   * Does NOT reload page - maintains SPA experience
+   */
+  const handleReset = () => {
+    if (onNewRequest) {
+      onNewRequest();
+    }
+  };
 
   return (
     <div className="result-display">
@@ -45,9 +90,13 @@ function ResultDisplay({ result, onNewRequest }) {
         <p>Your support request has been received and analyzed by our AI system.</p>
       </div>
 
-      {/* Result Card */}
+      {/* FEATURE 3: Healthcare Emergency Disclaimer
+          Always visible to ensure users understand this is support, not medical advice */}
+      <HealthcareDisclaimer />
+
+      {/* Main Result Card */}
       <div className="result-card">
-        {/* Patient Info */}
+        {/* Patient Info Section */}
         <div className="result-section">
           <h3>Patient Information</h3>
           <div className="info-grid">
@@ -62,20 +111,54 @@ function ResultDisplay({ result, onNewRequest }) {
           </div>
         </div>
 
-        {/* AI Summary */}
+        {/* AI Summary Section with Copy Button */}
         <div className="result-section">
-          <h3>AI-Generated Summary</h3>
+          <div className="section-header-with-action">
+            <h3>AI-Generated Summary</h3>
+            {/* FEATURE 7: Copy Summary Button */}
+            <button 
+              className="copy-button"
+              onClick={handleCopySummary}
+              aria-label="Copy summary to clipboard"
+            >
+              {copyStatus === 'success' ? '✓ Copied!' : 
+               copyStatus === 'error' ? '✗ Failed' : '📋 Copy'}
+            </button>
+          </div>
           <p className="summary-text">{result.summary}</p>
+          
+          {/* FEATURE 6: AI Confidence Indicator
+              Displayed below summary to provide context about AI certainty
+              Clearly labeled as simulated to avoid medical misinterpretation */}
+          {aiConfidence !== null && (
+            <div className="ai-confidence">
+              <span className="ai-confidence__label">AI Confidence:</span>
+              <span className="ai-confidence__value">{aiConfidence}%</span>
+              <span className="ai-confidence__disclaimer">(simulated)</span>
+              <div className="ai-confidence__bar">
+                <div 
+                  className="ai-confidence__fill"
+                  style={{ width: `${aiConfidence}%` }}
+                />
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Urgency Level */}
+        {/* FEATURE 1: Priority Badge with Color Coding
+            Visual urgency indicator helps volunteers quickly identify priority */}
         <div className="result-section">
           <h3>Urgency Classification</h3>
-          <div className={`urgency-badge ${urgencyConfig.className}`}>
-            <span className="urgency-icon">{urgencyConfig.icon}</span>
-            <span className="urgency-level">{result.urgency} Priority</span>
+          <div className="urgency-display">
+            <PriorityBadge urgency={result.urgency} size="large" />
           </div>
-          <p className="urgency-description">{urgencyConfig.description}</p>
+          
+          {/* FEATURE 2: Auto-Acknowledgement Message
+              Automation reduces manual communication overhead
+              Message automatically changes based on urgency level */}
+          <div className="acknowledgement-message">
+            <p>{acknowledgementMessage}</p>
+          </div>
         </div>
       </div>
 
@@ -90,13 +173,31 @@ function ResultDisplay({ result, onNewRequest }) {
         </ul>
       </div>
 
-      {/* New Request Button */}
-      <button 
-        className="new-request-button" 
-        onClick={onNewRequest}
-      >
-        Submit Another Request
-      </button>
+      {/* FEATURE 4: Edit Request & Reset Flow
+          Two clear actions for different user needs:
+          - Edit: Correct mistakes without losing data
+          - New Request: Start fresh for a different issue */}
+      <div className="action-buttons">
+        <button 
+          className="action-button action-button--edit"
+          onClick={handleEdit}
+          aria-label="Edit this request with pre-filled information"
+        >
+          ✏️ Edit Request
+        </button>
+        <button 
+          className="action-button action-button--new"
+          onClick={handleReset}
+          aria-label="Submit a new request with empty form"
+        >
+          ➕ Submit Another Request
+        </button>
+      </div>
+
+      {/* FEATURE 5: FAQ Accordion Section
+          This simulates a chatbot knowledge base for common questions
+          Provides instant answers without complex chat infrastructure */}
+      <FAQAccordion />
     </div>
   );
 }

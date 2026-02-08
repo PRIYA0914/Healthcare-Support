@@ -60,3 +60,33 @@ export const checkApiHealth = async () => {
     return { status: 'error', message: error.message };
   }
 };
+
+/**
+ * Sends a message to the FAQ chatbot
+ * 
+ * @param {string} message - User's message/question
+ * @returns {Promise<Object>} Chatbot response with reply
+ */
+export const sendChatMessage = async (message) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/chatbot/message`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to get chatbot response');
+    }
+
+    return data;
+
+  } catch (error) {
+    console.error('Chatbot API Error:', error.message);
+    throw error;
+  }
+};

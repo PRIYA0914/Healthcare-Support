@@ -190,6 +190,154 @@
   color: var(--color-white);
 }
 
+/* ===========================================
+   NEW FEATURE STYLES
+   =========================================== */
+
+/* Section Header with Action Button (FEATURE 7: Copy Button) */
+.section-header-with-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.section-header-with-action h3 {
+  margin-bottom: 0;
+}
+
+/* Copy Button (FEATURE 7) */
+.copy-button {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.copy-button:hover {
+  background: var(--color-gray-100);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* AI Confidence Indicator (FEATURE 6) */
+.ai-confidence {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.ai-confidence__label {
+  font-size: 0.85rem;
+  color: var(--color-gray-600);
+  font-weight: 500;
+}
+
+.ai-confidence__value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.ai-confidence__disclaimer {
+  font-size: 0.75rem;
+  color: var(--color-gray-400);
+  font-style: italic;
+}
+
+.ai-confidence__bar {
+  width: 100%;
+  height: 6px;
+  background: var(--color-gray-200);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: var(--spacing-xs);
+}
+
+.ai-confidence__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+/* Urgency Display (FEATURE 1: Priority Badge) */
+.urgency-display {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Acknowledgement Message (FEATURE 2) */
+.acknowledgement-message {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-radius: var(--radius-md);
+  border-left: 4px solid #1976d2;
+}
+
+.acknowledgement-message p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #0d47a1;
+  line-height: 1.6;
+}
+
+/* Action Buttons (FEATURE 4: Edit/Reset Flow) */
+.action-buttons {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  margin-bottom: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.action-button {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* Edit Button - Secondary style */
+.action-button--edit {
+  background: var(--color-white);
+  color: var(--color-gray-700);
+  border: 2px solid var(--color-gray-300);
+}
+
+.action-button--edit:hover {
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-400);
+}
+
+/* New Request Button - Primary style */
+.action-button--new {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: 2px solid var(--color-primary);
+}
+
+.action-button--new:hover {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary-light);
+}
+
 /* Responsive Design */
 @media (max-width: 600px) {
   .result-card {
@@ -198,5 +346,20 @@
   
   .info-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .action-button {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .section-header-with-action {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
   }
 }

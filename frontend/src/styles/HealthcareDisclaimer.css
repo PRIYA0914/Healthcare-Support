@@ -1,0 +1,63 @@
+/**
+ * HealthcareDisclaimer Component Styles
+ * 
+ * Prominent but non-intrusive medical disclaimer
+ * Uses informational styling (not alarming) to maintain trust
+ */
+
+.healthcare-disclaimer {
+  display: flex;
+  gap: var(--spacing-md);
+  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+  border: 1px solid #ffcc80;
+  border-left: 4px solid #f57c00;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin: var(--spacing-lg) 0;
+}
+
+.healthcare-disclaimer__icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.healthcare-disclaimer__content {
+  flex: 1;
+}
+
+.healthcare-disclaimer__title {
+  font-weight: 600;
+  color: #e65100;
+  margin-bottom: var(--spacing-xs);
+  font-size: 0.95rem;
+}
+
+.healthcare-disclaimer__text {
+  color: #bf360c;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: var(--spacing-sm);
+}
+
+.healthcare-disclaimer__emergency {
+  color: #d84315;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0;
+  padding-top: var(--spacing-xs);
+  border-top: 1px dashed #ffcc80;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .healthcare-disclaimer {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    text-align: center;
+  }
+  
+  .healthcare-disclaimer__icon {
+    font-size: 2rem;
+  }
+}
