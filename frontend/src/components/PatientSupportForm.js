@@ -209,9 +209,9 @@ function PatientSupportForm({ onSuccess, initialData }) {
         >
           <option value="">Select a category...</option>
           <option value="Medical">General Medical</option>
-          <option value="Mental Health">Mental Health & Emotional Support</option>
-          <option value="Emergency">Emergency / Critical Care</option>
-          <option value="Other">Other / Not Sure</option>
+          <option value="Mental Health">Mental Health</option>
+          <option value="Emergency">Emergency</option>
+          <option value="Other">Other</option>
         </select>
         {errors.issueCategory && (
           <span className="field-error">{errors.issueCategory}</span>
