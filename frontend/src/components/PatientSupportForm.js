@@ -208,11 +208,10 @@ function PatientSupportForm({ onSuccess, initialData }) {
           required
         >
           <option value="">Select a category...</option>
-          {ISSUE_CATEGORIES.map(cat => (
-            <option key={cat.value} value={cat.value}>
-              {cat.icon} {cat.label}
-            </option>
-          ))}
+          <option value="Medical">General Medical</option>
+          <option value="Mental Health">Mental Health & Emotional Support</option>
+          <option value="Emergency">Emergency / Critical Care</option>
+          <option value="Other">Other / Not Sure</option>
         </select>
         {errors.issueCategory && (
           <span className="field-error">{errors.issueCategory}</span>
