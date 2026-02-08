@@ -128,3 +128,84 @@ textarea {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
+
+/* ===========================================
+   VERSION 2.0: GLOBAL TRANSITIONS & POLISH
+   =========================================== */
+
+/**
+ * Smooth transitions for all interactive elements
+ * 
+ * UX REASONING:
+ * - Micro-animations provide feedback and delight
+ * - 0.2s is fast enough to feel responsive but visible
+ * - Transform properties are GPU-accelerated for smoothness
+ */
+
+/* Buttons get subtle lift on hover */
+button {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Links get smooth color transitions */
+a {
+  transition: color 0.2s ease;
+}
+
+/* Form inputs get focus transitions */
+input,
+select,
+textarea {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Cards and containers get subtle hover effects */
+.result-card,
+.next-steps,
+.faq-accordion {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/**
+ * Reduced Motion Preference
+ * 
+ * ACCESSIBILITY:
+ * Some users experience motion sickness from animations.
+ * This respects their system preferences.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/**
+ * Selection Colors
+ * Brand-consistent text selection
+ */
+::selection {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+/**
+ * Smooth scrolling for anchor links
+ * Only when not reduced motion
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}

@@ -116,26 +116,34 @@ ngo/
 │   │   ├── components/
 │   │   │   ├── Header.js              # Application header
 │   │   │   ├── PatientSupportForm.js  # Main form component
-│   │   │   ├── ResultDisplay.js       # AI results display (enhanced)
-│   │   │   ├── PriorityBadge.js       # NEW: Color-coded urgency badge
-│   │   │   ├── HealthcareDisclaimer.js # NEW: Medical safety notice
-│   │   │   ├── FAQAccordion.js        # NEW: FAQ section (chatbot concept)
-│   │   │   └── ChatBot.js             # NEW: FAQ chatbot with floating button
+│   │   │   ├── ResultDisplay.js       # AI results display (v2.0 card layout)
+│   │   │   ├── PriorityBadge.js       # Color-coded urgency badge
+│   │   │   ├── HealthcareDisclaimer.js # Medical safety notice
+│   │   │   ├── FAQAccordion.js        # FAQ section (chatbot concept)
+│   │   │   ├── ChatBot.js             # FAQ chatbot with smart suggestions
+│   │   │   ├── Toast.js               # v2.0: Toast notification system
+│   │   │   ├── StatusTracker.js       # v2.0: Visual workflow tracker
+│   │   │   ├── ResponseTimeEstimate.js # v2.0: Dynamic wait time
+│   │   │   └── EmergencyAction.js     # v2.0: Emergency shortcut
 │   │   ├── services/
 │   │   │   └── api.js                 # API communication
 │   │   ├── utils/
-│   │   │   └── resultHelpers.js       # NEW: Helper functions
+│   │   │   └── resultHelpers.js       # Helper functions
 │   │   ├── styles/
-│   │   │   ├── index.css              # Global styles
+│   │   │   ├── index.css              # Global styles (enhanced transitions)
 │   │   │   ├── App.css
 │   │   │   ├── Header.css
 │   │   │   ├── PatientSupportForm.css
-│   │   │   ├── ResultDisplay.css      # Enhanced with new feature styles
-│   │   │   ├── PriorityBadge.css      # NEW
-│   │   │   ├── HealthcareDisclaimer.css # NEW
-│   │   │   ├── FAQAccordion.css       # NEW
-│   │   │   └── ChatBot.css            # NEW: Chatbot styling
-│   │   ├── App.js                     # Main app component (enhanced)
+│   │   │   ├── ResultDisplay.css      # v2.0: Card-based layout
+│   │   │   ├── PriorityBadge.css
+│   │   │   ├── HealthcareDisclaimer.css
+│   │   │   ├── FAQAccordion.css
+│   │   │   ├── ChatBot.css            # Enhanced with smart suggestions
+│   │   │   ├── Toast.css              # v2.0: Toast styles
+│   │   │   ├── StatusTracker.css      # v2.0: Progress tracker styles
+│   │   │   ├── ResponseTimeEstimate.css # v2.0
+│   │   │   └── EmergencyAction.css    # v2.0
+│   │   ├── App.js                     # Main app (v2.0 with toast system)
 │   │   └── index.js                   # React entry point
 │   ├── package.json
 │   └── .env.example
@@ -507,6 +515,213 @@ The chatbot detects emergency keywords and responds with:
 - Consistent, accurate responses
 - Professional, accessible interface
 - Clear safety boundaries (not medical advice)
+
+---
+
+## 🆕 Version 3.0 Features (UI/UX Enhancements)
+
+### Feature 9: Estimated Response Time
+
+**Purpose:** Displays dynamic wait time based on urgency level.
+
+**Technical Implementation:**
+- Located in `ResponseTimeEstimate.js` and `ResponseTimeEstimate.css`
+- Calculates response time based on urgency:
+  - **HIGH:** 1-2 hours
+  - **MEDIUM:** 24-48 hours  
+  - **LOW:** 2-5 business days
+- Weekend detection for adjusted messaging
+- Icon indicators for visual clarity
+
+**Example Output:**
+```
+⏱️ Estimated Response Time
+Based on urgency level, expect response within 1-2 hours.
+Our volunteers are notified immediately for high-priority requests.
+```
+
+---
+
+### Feature 10: Request Status Tracker (Visual)
+
+**Purpose:** Visual workflow progress showing request lifecycle.
+
+**Technical Implementation:**
+- Located in `StatusTracker.js` and `StatusTracker.css`
+- Three-step workflow visualization:
+  1. ✅ **Submitted** - Request received
+  2. 🔄 **Under Review** - Being processed (current step with pulse animation)
+  3. ⏳ **Volunteer Assigned** - Help on the way (pending)
+- CSS animations for current step indicator
+- Responsive horizontal layout
+
+**Visual Design:**
+```
+[✓ Submitted] ─── [● Under Review] ─── [○ Volunteer Assigned]
+     Done            Current              Pending
+```
+
+---
+
+### Feature 11: Emergency Shortcut Action
+
+**Purpose:** Prominent emergency help button for HIGH urgency cases only.
+
+**Technical Implementation:**
+- Located in `EmergencyAction.js` and `EmergencyAction.css`
+- Only renders when `urgency === 'HIGH'`
+- Pulsing alert banner with emergency icon
+- Modal with emergency phone numbers:
+  - 🚑 Ambulance: 102
+  - 🏥 Hospital: 108
+  - 🆘 Emergency: 112
+- Clear disclaimers about not replacing professional emergency services
+- Click-outside-to-close functionality
+
+**Safety Features:**
+- Visible only for true emergencies
+- Links to real emergency numbers
+- Clear messaging about portal limitations
+
+---
+
+### Feature 12: Card-Based Result Layout
+
+**Purpose:** Organized, scannable information grouped into logical cards.
+
+**Technical Implementation:**
+- Updated `ResultDisplay.js` with card-based architecture
+- Four main cards:
+  1. **Primary Card** - Patient info (name, age, symptoms, urgency badge)
+  2. **Summary Card** - AI-generated summary with copy button
+  3. **Timeline Card** - Response time estimate component
+  4. **Status Card** - Request status tracker component
+- CSS Grid layout with responsive breakpoints
+- Hover effects and subtle shadows
+- Consistent spacing using CSS variables
+
+**Layout Structure:**
+```
+┌─────────────────────────────────────────────┐
+│  Primary Card (Patient Info + Urgency)      │
+├─────────────────────────────────────────────┤
+│  Summary Card (AI Analysis + Copy)          │
+├──────────────────────┬──────────────────────┤
+│  Timeline Card       │  Status Card         │
+│  (Response Time)     │  (Progress Tracker)  │
+└──────────────────────┴──────────────────────┘
+```
+
+---
+
+### Feature 13: Toast Notifications
+
+**Purpose:** Lightweight notification system for user feedback.
+
+**Technical Implementation:**
+- Located in `Toast.js` and `Toast.css`
+- Four notification types: `success`, `error`, `warning`, `info`
+- Auto-dismiss after 3 seconds
+- Manual dismiss with close button
+- `ToastContainer` component for managing multiple toasts
+- Slide-in animation from top-right
+- Unique ID system for proper state management
+
+**Usage in App.js:**
+```javascript
+// Show a toast
+showToast('Request submitted successfully!', 'success');
+
+// Toast types
+showToast('Error occurred', 'error');
+showToast('Please review', 'warning');
+showToast('Information', 'info');
+```
+
+---
+
+
+### Feature 15: Chatbot Quick Options (Selectable Guidance)
+
+**Purpose:** Instantly guide users to safe, relevant questions and reduce typing errors.
+
+**Technical Implementation:**
+- Added `QuickOptions.js` component for rendering quick reply chips
+- Options appear when chatbot opens and after bot replies
+- Options are clickable, accessible, and responsive
+- Disabled while bot is typing (prevents duplicate/conflicting requests)
+- Clicking an option sends it as a user message and triggers the reply logic
+- Category-aware: If a category is selected, extra options appear (e.g. "What mental health support is available?")
+
+**Default Options:**
+   - What happens after submission?
+   - How long will it take to respond?
+   - Is this an emergency?
+   - Is my data safe?
+   - Support related to my category
+
+**Category-Specific Examples:**
+   - Mental Health: "What mental health support is available?"
+   - Emergency: "What should I do immediately?"
+   - Financial Aid: "What documents are required?"
+
+**UI/UX Details:**
+- Options are styled as rounded chips, wrap on small screens
+- Fade in smoothly, hide while bot is typing
+- Fully keyboard accessible
+
+**Why this matters:**
+- Reduces user effort and confusion
+- Prevents repetitive or invalid questions
+- Ensures users get safe, relevant, and category-appropriate guidance
+- Greatly improves accessibility for users who may have difficulty typing
+
+**Example Flow:**
+```
+User opens chatbot
+Bot: "How can I help you?"
+[What happens after submission?] [How long will it take to respond?] [Is this an emergency?] [Is my data safe?] [Support related to my category]
+
+User clicks: "What happens after submission?"
+Bot: [Explains next steps]
+```
+
+---
+
+## 🎨 UI/UX Polish (Version 3.0)
+
+### Visual Enhancements Applied:
+
+1. **Smooth Transitions**
+   - All interactive elements have subtle fade/slide animations
+   - 0.2s transition duration for consistency
+   - `@media (prefers-reduced-motion)` support for accessibility
+
+2. **Improved Spacing**
+   - CSS variables for consistent spacing (`--spacing-xs` to `--spacing-xl`)
+   - Card-based layout with proper visual hierarchy
+   - Responsive padding and margins
+
+3. **Typography Refinements**
+   - System font stack for native feel
+   - Proper heading hierarchy
+   - Readable line heights
+
+4. **Icons & Visual Indicators**
+   - Emoji icons for quick recognition
+   - Status indicators with color coding
+   - Pulsing animations for attention
+
+5. **Error States & Feedback**
+   - Toast notifications for all user actions
+   - Clear error messaging
+   - Loading states where appropriate
+
+6. **Accessibility Features**
+   - Keyboard navigation support
+   - ARIA labels on interactive elements
+   - High contrast color choices
+   - Reduced motion preference respected
 
 ---
 

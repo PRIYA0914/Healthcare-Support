@@ -363,3 +363,239 @@
     gap: var(--spacing-sm);
   }
 }
+
+/* ===========================================
+   VERSION 2.0: CARD-BASED LAYOUT
+   =========================================== */
+
+/**
+ * Animated result display container
+ * Fade-in animation for smooth appearance
+ */
+.result-display--animated {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/**
+ * Card Grid Layout
+ * Responsive grid that adapts to screen size
+ */
+.result-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  text-align: left;
+}
+
+@media (min-width: 768px) {
+  .result-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  /* Summary card spans full width for prominence */
+  .result-card--summary {
+    grid-column: 1 / -1;
+  }
+  
+  /* Status card spans full width */
+  .result-card--status {
+    grid-column: 1 / -1;
+  }
+}
+
+/**
+ * Individual Card Styling
+ * Cards group related information for better scanability
+ */
+.result-card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--color-gray-200);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.result-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/**
+ * Card Header
+ * Consistent header styling across all cards
+ */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/**
+ * Card Body
+ * Main content area with consistent padding
+ */
+.card-body {
+  padding: var(--spacing-lg);
+}
+
+/**
+ * Primary Card - Patient Info
+ * Emphasis on key patient details
+ */
+.result-card--primary {
+  border-top: 4px solid var(--color-primary);
+}
+
+/**
+ * Summary Card
+ * Most important card - contains AI analysis
+ */
+.result-card--summary {
+  border-top: 4px solid #8b5cf6;
+}
+
+.result-card--summary .summary-text {
+  margin-bottom: var(--spacing-md);
+}
+
+/**
+ * Timeline Card
+ * Response time and acknowledgement
+ */
+.result-card--timeline {
+  border-top: 4px solid #f59e0b;
+}
+
+/**
+ * Status Card
+ * Request status tracker - no interior cards needed
+ */
+.result-card--status {
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.result-card--status:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/**
+ * Urgency Inline Display
+ * Shows priority badge inline with patient info
+ */
+.urgency-inline {
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px dashed var(--color-gray-200);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.urgency-inline .info-label {
+  font-weight: 500;
+}
+
+/**
+ * Copy Button Enhancement
+ * Visual feedback for copy action
+ */
+.copy-button--success {
+  background: #ecfdf5;
+  border-color: #10b981;
+  color: #059669;
+}
+
+.copy-button--error {
+  background: #fef2f2;
+  border-color: #ef4444;
+  color: #dc2626;
+}
+
+/**
+ * AI Confidence - Improved Layout
+ */
+.ai-confidence__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  margin-bottom: var(--spacing-xs);
+}
+
+/**
+ * Acknowledgement Message - Enhanced
+ */
+.acknowledgement-message {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-radius: var(--radius-md);
+}
+
+.acknowledgement-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+/**
+ * Next Steps - Enhanced with icons
+ */
+.next-steps {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  text-align: left;
+  border: 1px solid var(--color-gray-200);
+}
+
+.next-steps h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.next-steps li {
+  padding: var(--spacing-sm) 0;
+  padding-left: 0;
+  color: var(--color-gray-700);
+}
+
+.next-steps li::before {
+  content: none;
+}

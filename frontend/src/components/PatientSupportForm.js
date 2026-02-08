@@ -13,16 +13,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { submitSupportRequest } from '../services/api';
+import { ISSUE_CATEGORIES } from '../utils/categoryConfig';
 import '../styles/PatientSupportForm.css';
-
-// Available issue categories for the dropdown
-const ISSUE_CATEGORIES = [
-  { value: '', label: 'Select a category' },
-  { value: 'Medical', label: 'Medical' },
-  { value: 'Mental Health', label: 'Mental Health' },
-  { value: 'Emergency', label: 'Emergency' },
-  { value: 'Other', label: 'Other' }
-];
 
 function PatientSupportForm({ onSuccess, initialData }) {
   // Form field states - initialized from initialData if provided
@@ -205,7 +197,7 @@ function PatientSupportForm({ onSuccess, initialData }) {
 
       {/* Issue Category Dropdown */}
       <div className="form-group">
-        <label htmlFor="issueCategory">Issue Category *</label>
+        <label htmlFor="issueCategory">Issue Category <span aria-label="required">*</span></label>
         <select
           id="issueCategory"
           name="issueCategory"
@@ -213,10 +205,12 @@ function PatientSupportForm({ onSuccess, initialData }) {
           onChange={handleChange}
           className={errors.issueCategory ? 'error' : ''}
           disabled={isSubmitting}
+          required
         >
-          {ISSUE_CATEGORIES.map(category => (
-            <option key={category.value} value={category.value}>
-              {category.label}
+          <option value="">Select a category...</option>
+          {ISSUE_CATEGORIES.map(cat => (
+            <option key={cat.value} value={cat.value}>
+              {cat.icon} {cat.label}
             </option>
           ))}
         </select>

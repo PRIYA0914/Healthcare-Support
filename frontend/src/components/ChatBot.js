@@ -11,14 +11,19 @@
  * - Message list with user/bot distinction
  * - Input field with send button
  * - Auto-scroll to latest message
+ * - SMART SUGGESTIONS: Context-aware prompts that appear after responses
  * 
  * IMPORTANT DISCLAIMER:
  * This chatbot provides general guidance only. It does not provide
  * medical advice, diagnosis, or treatment.
  */
 
-import React, { useState, useRef, useEffect } from 'react';
-import { sendChatMessage } from '../services/api';
+import React, { useState } from 'react';
+import ChatHeader from './ChatHeader';
+import ChatMessages from './ChatMessages';
+import ChatInput from './ChatInput';
+import QuickOptions from './QuickOptions';
+import { getCategoryDetails } from '../utils/categoryConfig';
 import '../styles/ChatBot.css';
 
 /**
@@ -37,7 +42,8 @@ const WELCOME_MESSAGE = {
 How can I help you today?
 
 _Note: I provide general guidance only, not medical advice._`,
-  timestamp: new Date()
+  timestamp: new Date(),
+  intent: 'greeting'
 };
 
 /**
@@ -50,260 +56,244 @@ const QUICK_REPLIES = [
   'Is my data safe?'
 ];
 
-function ChatBot() {
-  // Chat window visibility state
+/**
+ * SMART SUGGESTIONS: Context-aware suggestions based on last response
+ * 
+ * These appear after bot responses to guide users to relevant follow-up questions.
+ * This reduces typing and helps users discover features they might not know about.
+ * 
+ * Key UX benefits:
+ * - Reduces cognitive load (users don't have to think of questions)
+ * - Increases engagement by showing related topics
+ * - Helps users find answers faster
+ */
+const SMART_SUGGESTIONS = {
+  greeting: [
+    'Tell me about your services',
+    'How do I submit a request?',
+    'What is response time?'
+  ],
+  services: [
+    'Is this service free?',
+    'How do I get started?',
+    'Who are the volunteers?'
+  ],
+  response_time: [
+    'What if I have an emergency?',
+    'Can I check my request status?',
+    'Is my data safe?'
+  ],
+  how_to_submit: [
+    'What information do I need?',
+    'What categories are available?',
+    'How long until I hear back?'
+  ],
+  cost: [
+    'What services do you provide?',
+    'How can I support the NGO?',
+    'Tell me about volunteering'
+  ],
+  emergency: [
+    'What support do you provide?',
+    'How quickly can you respond?',
+    'Mental health resources'
+  ],
+  mental_health: [
+    'Is this service confidential?',
+    'What happens after I submit?',
+    'Emergency resources'
+  ],
+  data_safety: [
+    'How do I submit a request?',
+    'Who will see my information?',
+    'What services are available?'
+  ],
+  volunteer: [
+    'What does volunteering involve?',
+    'How many volunteers do you have?',
+    'Other ways to help?'
+  ],
+  medical_service: [
+    'What support do you offer?',
+    'Where should I go for emergencies?',
+    'Mental health support'
+  ],
+  default: [
+    'What services do you provide?',
+    'How long to get a response?',
+    'How can I help?'
+  ]
+};
+
+
+// CATEGORY-AWARE, LARGE SIDE PANEL CHATBOT
+// Accepts submittedCategory prop for context-aware responses
+function ChatBot({ submittedCategory }) {
   const [isOpen, setIsOpen] = useState(false);
-  
-  // Messages array - starts with welcome message
   const [messages, setMessages] = useState([WELCOME_MESSAGE]);
-  
-  // Current input value
-  const [inputValue, setInputValue] = useState('');
-  
-  // Loading state for API calls
-  const [isLoading, setIsLoading] = useState(false);
-  
-  // Reference to messages container for auto-scroll
-  const messagesEndRef = useRef(null);
-  
-  // Reference to input field for focus management
-  const inputRef = useRef(null);
+  const [typing, setTyping] = useState(false);
 
-  /**
-   * Auto-scroll to bottom when new messages arrive
-   */
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  // Rule-based safe response logic (can be expanded)
+  function getBotResponse(userMsg) {
+    const text = userMsg.toLowerCase();
+    // Emergency keyword detection
+    if (/emergency|urgent|critical|danger|help/.test(text)) {
+      return {
+        reply: 'This sounds like an emergency. Please contact your local emergency services immediately. Our support portal is not a substitute for emergency medical care.',
+        intent: 'emergency',
+      };
     }
-  }, [messages]);
 
-  /**
-   * Focus input when chat opens
-   */
-  useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
+    // Quick Option: What happens after submission?
+    if (text.includes('what happens after submission')) {
+      return {
+        reply: 'After you submit your request, our team reviews the details and assigns a volunteer based on urgency and category. You will be contacted as soon as possible with next steps.',
+        intent: 'process',
+      };
     }
-  }, [isOpen]);
+    // Quick Option: How long will it take to respond?
+    if (text.includes('how long will it take to respond')) {
+      return {
+        reply: 'Response times depend on urgency and current case load. Emergency cases are prioritized (1-2 hours), while other requests may take up to 48 hours. We appreciate your patience!',
+        intent: 'response_time',
+      };
+    }
+    // Quick Option: Is this an emergency?
+    if (text.includes('is this an emergency')) {
+      return {
+        reply: 'If you believe your situation is an emergency, please contact local emergency services immediately. Our portal is for general support and cannot replace urgent care.',
+        intent: 'emergency',
+      };
+    }
+    // Quick Option: Is my data safe?
+    if (text.includes('is my data safe')) {
+      return {
+        reply: 'Your privacy is important to us. All information you provide is kept confidential and used only to connect you with appropriate support. We do not share your data outside the NGO.',
+        intent: 'data_safety',
+      };
+    }
+    // Quick Option: Support related to my category
+    if (text.includes('support related to my category')) {
+      if (submittedCategory) {
+        const { label } = getCategoryDetails(submittedCategory);
+        return {
+          reply: `You selected the category: ${label}. Our volunteers are trained to provide guidance and resources specific to this area. If you have more details or questions, please share them!`,
+          intent: 'category_support',
+        };
+      } else {
+        return {
+          reply: 'Please select a category in the support form to get more specific guidance.',
+          intent: 'category_support',
+        };
+      }
+    }
+    // Category-specific quick options
+    if (text.includes('what mental health support is available')) {
+      return {
+        reply: 'We offer emotional support, information on coping strategies, and can connect you with mental health professionals or helplines. All conversations are confidential.',
+        intent: 'mental_health',
+      };
+    }
+    if (text.includes('what should i do immediately')) {
+      return {
+        reply: 'If you are in immediate danger or experiencing a medical emergency, call your local emergency number now. Our team will also prioritize your request, but do not wait for a response.',
+        intent: 'emergency',
+      };
+    }
+    if (text.includes('what documents are required')) {
+      return {
+        reply: 'For financial or aid assistance, please prepare any relevant ID, proof of income, and medical documents. Our volunteers will let you know exactly what is needed after reviewing your case.',
+        intent: 'financial',
+      };
+    }
 
-  /**
-   * Toggles the chat window open/closed
-   */
-  const toggleChat = () => {
-    setIsOpen(prev => !prev);
-  };
-
-  /**
-   * Handles input field changes
-   */
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
-  };
-
-  /**
-   * Sends a message to the chatbot API
-   * 
-   * @param {string} messageText - The message to send
-   */
-  const sendMessage = async (messageText) => {
-    const text = messageText.trim();
-    if (!text || isLoading) return;
-
-    // Add user message to chat
-    const userMessage = {
-      type: 'user',
-      text: text,
-      timestamp: new Date()
+    // Category-aware guidance (fallback)
+    if (submittedCategory) {
+      const { label } = getCategoryDetails(submittedCategory);
+      if (submittedCategory === 'mental_health') {
+        return {
+          reply: `Since this is related to Mental Health, here are some general steps: \n• Reach out to trusted contacts or a counselor.\n• Practice self-care and seek a safe environment.\n• If you feel unsafe, contact a helpline or emergency services.`,
+          intent: 'mental_health',
+        };
+      }
+      if (submittedCategory === 'emergency') {
+        return {
+          reply: `This appears to be an emergency. Please call emergency services immediately. Our team will prioritize your request, but do not wait for a response if you are in danger.`,
+          intent: 'emergency',
+        };
+      }
+      if (submittedCategory === 'financial') {
+        return {
+          reply: `For Financial/Aid Assistance, please keep required documents ready. Our volunteers will guide you through the process.`,
+          intent: 'financial',
+        };
+      }
+      // Default category-aware
+      return {
+        reply: `Since this is related to ${label}, our team will review your request and provide general guidance soon.`,
+        intent: 'default',
+      };
+    }
+    // General fallback
+    return {
+      reply: 'I can provide general guidance about our NGO services, support process, and next steps. For medical emergencies, always contact professionals.',
+      intent: 'default',
     };
-    setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
-    setIsLoading(true);
+  }
 
-    try {
-      // Send to backend API
-      const response = await sendChatMessage(text);
-      
-      // Add bot response
-      const botMessage = {
-        type: 'bot',
-        text: response.reply || 'I apologize, but I couldn\'t process your message. Please try again.',
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, botMessage]);
-    } catch (error) {
-      // Error handling - show friendly error message
-      const errorMessage = {
-        type: 'bot',
-        text: 'I apologize, but I\'m having trouble connecting right now. Please try again later or submit a support request through our form.',
-        timestamp: new Date(),
-        isError: true
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Quick options for initial and category-aware guidance
+  const baseOptions = [
+    'What happens after submission?',
+    'How long will it take to respond?',
+    'Is this an emergency?',
+    'Is my data safe?',
+    'Support related to my category'
+  ];
+  // Add category-specific options
+  let categoryOptions = [];
+  if (submittedCategory === 'mental_health') {
+    categoryOptions.push('What mental health support is available?');
+  } else if (submittedCategory === 'emergency') {
+    categoryOptions.push('What should I do immediately?');
+  } else if (submittedCategory === 'financial') {
+    categoryOptions.push('What documents are required?');
+  }
+  const quickOptions = [...baseOptions, ...categoryOptions];
 
-  /**
-   * Handles form submission
-   */
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    sendMessage(inputValue);
-  };
-
-  /**
-   * Handles quick reply button click
-   */
-  const handleQuickReply = (text) => {
-    sendMessage(text);
-  };
-
-  /**
-   * Handles Enter key press (Shift+Enter for newline)
-   */
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit(e);
-    }
-  };
-
-  /**
-   * Formats message text for display
-   * Handles line breaks and basic markdown-like formatting
-   */
-  const formatMessageText = (text) => {
-    return text.split('\n').map((line, index) => (
-      <span key={index}>
-        {line}
-        {index < text.split('\n').length - 1 && <br />}
-      </span>
-    ));
+  // Handle sending a message (from input or quick option)
+  const handleSend = (msg) => {
+    if (!msg.trim()) return;
+    setMessages(prev => [...prev, { type: 'user', text: msg }]);
+    setTyping(true);
+    setTimeout(() => {
+      const bot = getBotResponse(msg);
+      setMessages(prev => [...prev, { type: 'bot', text: bot.reply }]);
+      setTyping(false);
+    }, 900);
   };
 
   return (
-    <div className="chatbot-container">
-      {/* Floating Chat Button */}
-      <button
-        className={`chatbot-toggle ${isOpen ? 'chatbot-toggle--open' : ''}`}
-        onClick={toggleChat}
-        aria-label={isOpen ? 'Close chat' : 'Open chat'}
-        aria-expanded={isOpen}
-      >
-        {isOpen ? (
-          <span className="chatbot-toggle__icon">✕</span>
-        ) : (
-          <>
-            <span className="chatbot-toggle__icon">💬</span>
-            <span className="chatbot-toggle__text">Need Help?</span>
-          </>
-        )}
-      </button>
-
-      {/* Chat Window */}
-      {isOpen && (
-        <div 
-          className="chatbot-window"
-          role="dialog"
-          aria-label="Chat with Jarurat Care support"
-        >
-          {/* Header */}
-          <div className="chatbot-header">
-            <div className="chatbot-header__info">
-              <span className="chatbot-header__title">💚 Jarurat Care</span>
-              <span className="chatbot-header__subtitle">Support Assistant</span>
-            </div>
-            <button
-              className="chatbot-header__close"
-              onClick={toggleChat}
-              aria-label="Close chat"
-            >
-              ✕
-            </button>
-          </div>
-
-          {/* Messages Area */}
-          <div className="chatbot-messages">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`chatbot-message chatbot-message--${message.type} ${message.isError ? 'chatbot-message--error' : ''}`}
-              >
-                {message.type === 'bot' && (
-                  <div className="chatbot-message__avatar">🤖</div>
-                )}
-                <div className="chatbot-message__content">
-                  <div className="chatbot-message__text">
-                    {formatMessageText(message.text)}
-                  </div>
-                </div>
-              </div>
-            ))}
-            
-            {/* Loading indicator */}
-            {isLoading && (
-              <div className="chatbot-message chatbot-message--bot">
-                <div className="chatbot-message__avatar">🤖</div>
-                <div className="chatbot-message__content">
-                  <div className="chatbot-message__typing">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            {/* Scroll anchor */}
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Quick Replies (shown only after welcome message) */}
-          {messages.length === 1 && (
-            <div className="chatbot-quick-replies">
-              {QUICK_REPLIES.map((reply, index) => (
-                <button
-                  key={index}
-                  className="chatbot-quick-reply"
-                  onClick={() => handleQuickReply(reply)}
-                >
-                  {reply}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Input Area */}
-          <form className="chatbot-input" onSubmit={handleSubmit}>
-            <input
-              ref={inputRef}
-              type="text"
-              value={inputValue}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              placeholder="Type your question..."
-              disabled={isLoading}
-              maxLength={500}
-              aria-label="Type your message"
-            />
-            <button
-              type="submit"
-              disabled={isLoading || !inputValue.trim()}
-              aria-label="Send message"
-            >
-              {isLoading ? '...' : '→'}
-            </button>
-          </form>
-
-          {/* Safety Disclaimer Footer */}
-          <div className="chatbot-disclaimer">
-            ⚕️ This chatbot provides guidance only, not medical advice.
-          </div>
-        </div>
+    <>
+      {!isOpen && (
+        <button className="chatbot-fab" onClick={() => setIsOpen(true)}>
+          💬 Chat with Support
+        </button>
       )}
-    </div>
+      {isOpen && (
+        <aside className="chatbot-panel">
+          <ChatHeader onClose={() => setIsOpen(false)} />
+          <ChatMessages messages={messages} typing={typing} submittedCategory={submittedCategory} />
+          {/* Show quick options at bottom, just above input, hide while typing */}
+          {!typing && (
+            <QuickOptions options={quickOptions} onOptionClick={handleSend} disabled={typing} />
+          )}
+          <ChatInput onSend={handleSend} />
+          <div className="chatbot-disclaimer">
+            This chatbot provides guidance only and does not replace medical professionals.
+          </div>
+        </aside>
+      )}
+    </>
   );
 }
 

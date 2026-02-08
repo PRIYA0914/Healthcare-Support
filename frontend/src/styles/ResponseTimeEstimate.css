@@ -1,0 +1,123 @@
+/**
+ * ResponseTimeEstimate Component Styles
+ * 
+ * DESIGN PRINCIPLES:
+ * - Color-coded to match urgency level
+ * - Clear hierarchy: time value is most prominent
+ * - Subtle disclaimer styling (important but secondary)
+ */
+
+/* ========================================
+   MAIN CONTAINER
+   ======================================== */
+
+.response-time {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+/* ========================================
+   URGENCY-BASED THEMES
+   ======================================== */
+
+.response-time--high {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 1px solid #fecaca;
+}
+
+.response-time--high .response-time__value {
+  color: #dc2626;
+}
+
+.response-time--medium {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1px solid #fde68a;
+}
+
+.response-time--medium .response-time__value {
+  color: #d97706;
+}
+
+.response-time--low {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border: 1px solid #a7f3d0;
+}
+
+.response-time--low .response-time__value {
+  color: #059669;
+}
+
+/* ========================================
+   MAIN DISPLAY AREA
+   ======================================== */
+
+.response-time__main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.response-time__icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.response-time__content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.response-time__label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.response-time__value {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* ========================================
+   DETAILS SECTION
+   ======================================== */
+
+.response-time__details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+.response-time__message {
+  font-size: 13px;
+  color: #475569;
+}
+
+.response-time__disclaimer {
+  font-size: 11px;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 480px) {
+  .response-time__value {
+    font-size: 18px;
+  }
+
+  .response-time__icon {
+    font-size: 24px;
+  }
+}
