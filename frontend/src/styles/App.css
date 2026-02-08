@@ -1,0 +1,74 @@
+/**
+ * App Component Styles
+ * 
+ * Layout styles for the main application container.
+ */
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main Content Area */
+.main-content {
+  flex: 1;
+  padding: var(--spacing-xl) 0;
+}
+
+/* Introduction Section */
+.intro-section {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.intro-section h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin-bottom: var(--spacing-md);
+}
+
+.intro-section p {
+  color: var(--color-gray-600);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Content Wrapper */
+.content-wrapper {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-xl);
+}
+
+/* Footer */
+.footer {
+  background: var(--color-primary-dark);
+  color: var(--color-white);
+  text-align: center;
+  padding: var(--spacing-lg);
+}
+
+.footer p {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.footer-tagline {
+  margin-top: var(--spacing-xs) !important;
+  opacity: 0.8;
+  font-size: 0.8rem !important;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .content-wrapper {
+    padding: var(--spacing-md);
+  }
+  
+  .intro-section h2 {
+    font-size: 1.5rem;
+  }
+}
