@@ -20,7 +20,55 @@ This helps the NGO efficiently triage incoming requests and allocate resources w
 
 ---
 
+
 ## 🛠️ Tech Stack
+---
+
+## 🚀 Deployment & Integration
+
+### Backend (Node.js + Express) on Render
+
+- The backend is production-ready for Render deployment.
+- Listens on `process.env.PORT` (Render sets this automatically).
+- CORS enabled for all origins (safe for public API, adjust as needed).
+- All API endpoints are grouped under `/api`.
+- Health check endpoint: `GET /api/health` returns `{ "status": "ok" }`.
+
+#### Example Render Service Settings
+- **Build Command:** `npm install`
+- **Start Command:** `node server.js`
+- **Environment Variables:** (as needed)
+
+### Frontend (React) on Vercel
+
+- Set the environment variable in Vercel:
+   - `REACT_APP_API_URL=https://healthcare-support-backend.onrender.com/api`
+- All frontend API calls should use this base URL.
+
+### API Base URL
+
+```
+https://healthcare-support-backend.onrender.com/api
+```
+
+---
+
+## ⚙️ Production Safety
+
+- No hardcoded localhost URLs or ports
+- No secrets exposed in code
+- Works in both local and production environments
+
+---
+
+## 🩺 Health Check Example
+
+```
+GET https://healthcare-support-backend.onrender.com/api/health
+Response: { "status": "ok" }
+```
+
+---
 
 | Layer | Technology |
 |-------|------------|

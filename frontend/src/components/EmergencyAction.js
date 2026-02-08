@@ -1,29 +1,3 @@
-/**
- * EmergencyAction Component - Critical Emergency Shortcut
- * 
- * PURPOSE:
- * When a request is classified as HIGH urgency, this component
- * provides prominent emergency action options. This is a
- * HEALTHCARE RESPONSIBILITY feature - ensuring users with
- * genuine emergencies are directed to proper emergency services.
- * 
- * IMPORTANT DISCLAIMER:
- * This NGO support portal is NOT a substitute for emergency
- * medical services. This component ensures users understand
- * this and provides quick access to appropriate resources.
- * 
- * UX REASONING:
- * - Red color scheme creates immediate visual alarm
- * - Large, prominent button is impossible to miss
- * - Modal with detailed information prevents accidental dismissal
- * - Phone number for emergency services is clearly visible
- * 
- * LEGAL/ETHICAL NOTE:
- * Healthcare apps have a responsibility to guide users to
- * professional emergency services when situations are critical.
- * This component fulfills that responsibility.
- */
-
 import React, { useState } from 'react';
 import '../styles/EmergencyAction.css';
 

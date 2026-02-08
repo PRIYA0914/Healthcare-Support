@@ -1,3 +1,4 @@
+// Trigger redeploy for Render
 /**
  * Jarurat Care - NGO Healthcare Support Backend Server
  * 
@@ -17,22 +18,13 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware Configuration
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? 'https://your-frontend-domain.vercel.app' 
-    : 'http://localhost:3000',
-  methods: ['GET', 'POST'],
-  credentials: true
-}));
+// Enable CORS for all origins (safe for public API, adjust as needed)
+app.use(cors({ origin: '*', methods: ['GET', 'POST'] }));
 app.use(express.json());
 
 // Health check endpoint for deployment verification
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'ok', 
-    message: 'Jarurat Care API is running',
-    timestamp: new Date().toISOString()
-  });
+  res.status(200).json({ status: 'ok' });
 });
 
 // API Routes
@@ -45,6 +37,5 @@ app.use(errorHandler);
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`✅ Jarurat Care Backend running on port ${PORT}`);
-  console.log(`📍 API endpoint: http://localhost:${PORT}/api/support-request`);
+  console.log(`Server running on port ${PORT}`);
 });
